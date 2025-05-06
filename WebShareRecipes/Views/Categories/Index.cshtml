@@ -1,0 +1,149 @@
+﻿@model List<WebShareRecipes.Models.Category>
+@{
+    ViewData["Title"] = "Quản lý chủ đề";
+}
+
+<!-- Bootstrap & DataTables CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+@* aaaa ádasdasdsadsa *@
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Tạo chủ đề mới</button>
+
+<table id="categoriesTable" class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên chủ đề</th>
+            <th>Hiển thị</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.Name</td>
+                <td>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input toggle-status" type="checkbox"
+                               data-id="@category.CategoryId"
+                        @(category.Status ? "checked" : "") />
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-warning btn-sm edit-btn"
+                            data-id="@category.CategoryId"
+                            data-name="@category.Name"
+                            data-status="@category.Status"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal">
+                        Sửa
+                    </button>
+                    <a asp-action="Delete" asp-route-id="@category.CategoryId"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Bạn có chắc muốn xóa chủ đề này?')">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal Create -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="Create" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo chủ đề mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Tên chủ đề</label>
+                    <input name="Name" class="form-control" required />
+                </div>
+                <div class="form-check form-switch">
+                    <input type="checkbox" name="Status" class="form-check-input" value="true" id="createStatus" />
+                    <label class="form-check-label" for="createStatus">Hiển thị</label>
+                </div>
+                <input type="hidden" name="Status" value="false" />
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editForm" method="post" class="modal-content">
+            <input type="hidden" name="CategoryId" id="editCategoryId" />
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa chủ đề</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Tên chủ đề</label>
+                    <input name="Name" id="editName" class="form-control" required />
+                </div>
+                <div class="form-check form-switch">
+                    <input type="checkbox" name="Status" class="form-check-input" value="true" id="editStatus" />
+                    <label class="form-check-label" for="editStatus">Hiển thị</label>
+                </div>
+                <input type="hidden" name="Status" value="false" />
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- jQuery + DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Kích hoạt DataTables với tùy chỉnh ngôn ngữ tiếng Việt
+            $('#categoriesTable').DataTable({
+                language: {
+                    lengthMenu: "Hiển thị _MENU_ chủ đề mỗi trang",
+                    zeroRecords: "Không tìm thấy chủ đề nào",
+                    info: "Hiển thị trang _PAGE_ trong tổng số _PAGES_ trang",
+                    infoEmpty: "Không có chủ đề nào",
+                    infoFiltered: "(lọc từ _MAX_ chủ đề)",
+                    search: "Tìm kiếm:",
+                    paginate: {
+                        first: "Đầu",
+                        last: "Cuối",
+                        next: "Tiếp",
+                        previous: "Trước"
+                    }
+                },
+                pageLength: 10
+            });
+
+            // Bắt sự kiện sửa
+            $('.edit-btn').click(function () {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                const status = $(this).data('status');
+
+                $('#editForm').attr('action', '/Categories/Edit/' + id);
+                $('#editCategoryId').val(id);
+                $('#editName').val(name);
+                $('#editStatus').prop('checked', status === true || status === "True");
+            });
+
+            // Toggle status qua AJAX
+            $('.toggle-status').change(function () {
+                const id = $(this).data('id');
+                $.post('/Categories/ToggleStatus', { id: id });
+            });
+        });
+    </script>
+}
+

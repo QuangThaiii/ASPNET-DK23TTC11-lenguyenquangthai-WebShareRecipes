@@ -1,0 +1,25 @@
+﻿@model IEnumerable<WebShareRecipes.Models.Recipe>
+
+<h2>Danh sách công thức</h2>
+
+@foreach (var recipe in Model)
+{
+    <div class="recipe-block">
+        <h3>@recipe.Title</h3>
+        <p><strong>Mô tả:</strong> @recipe.Description</p>
+
+        @if (recipe.Steps != null && recipe.Steps.Any())
+        {
+            <ol>
+                @foreach (var step in recipe.Steps.OrderBy(s => s.StepOrder))
+                {
+                    <li>@step.Description</li>
+                }
+            </ol>
+        }
+        else
+        {
+            <p><i>Chưa có bước thực hiện</i></p>
+        }
+    </div>
+}

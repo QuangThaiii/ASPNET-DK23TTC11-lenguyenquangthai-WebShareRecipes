@@ -1,2 +1,43 @@
 ﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    // Customize validation messages for Vietnamese
+    (function ($) {
+        $.validator.setDefaults({
+            messages: {
+                required: "Trường này là bắt buộc.",
+                maxlength: $.validator.format("Vui lòng không nhập quá {0} ký tự.")
+            }
+        });
+
+        // Override unobtrusive validation to use custom error messages from model
+        $.validator.unobtrusive.adapters.add("required", function (options) {
+            if (options.element.tagName.toUpperCase() !== "INPUT" || options.element.type.toUpperCase() !== "CHECKBOX") {
+                options.rules["required"] = true;
+                if (options.message) {
+                    options.messages["required"] = options.message; // Use ErrorMessage from model
+                }
+            }
+        });
+
+        $.validator.unobtrusive.adapters.add("maxlength", function (options) {
+            options.rules["maxlength"] = parseInt(options.params);
+            if (options.message) {
+                options.messages["maxlength"] = options.message; // Use ErrorMessage from model
+            }
+        });
+
+        // Ensure validation messages are applied to dynamically indexed elements (RecipeSteps)
+        $(document).ready(function () {
+            $("form").each(function () {
+                var form = $(this);
+                form.validate().settings.ignore = []; // Ensure validation applies to all elements
+
+                // Re-parse the form to apply validation to dynamically added elements
+                form.removeData("validator").removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            });
+        });
+    })(jQuery);
+</script>

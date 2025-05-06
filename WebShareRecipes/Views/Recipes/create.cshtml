@@ -1,0 +1,234 @@
+﻿@model WebShareRecipes.Models.CreateRecipeViewModel
+@{
+    ViewData["Title"] = "Tạo Công Thức Mới";
+}
+
+<h2 class="mb-4">Tạo Công Thức Mới</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" id="recipeForm" onsubmit="return validateForm()">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Recipe Fields -->
+    <div class="form-group">
+        <label asp-for="Recipe.Title">Tên món ăn</label>
+        <input asp-for="Recipe.Title" class="form-control" required />
+        <span asp-validation-for="Recipe.Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.Description">Mô tả</label>
+        <textarea asp-for="Recipe.Description" class="form-control" required></textarea>
+        <span asp-validation-for="Recipe.Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.Ingredients">Nguyên liệu</label>
+        <textarea asp-for="Recipe.Ingredients" class="form-control" required></textarea>
+        <span asp-validation-for="Recipe.Ingredients" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.Instructions">Hướng dẫn chung</label>
+        <textarea asp-for="Recipe.Instructions" class="form-control" required></textarea>
+        <span asp-validation-for="Recipe.Instructions" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.ImageUrl">Hình ảnh món ăn</label>
+        <input type="file" name="image" id="recipeImage" class="form-control" />
+        <span id="recipeImageError" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh món ăn.</span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.CategoryId">Chuyên mục</label>
+        <select asp-for="Recipe.CategoryId" class="form-control" asp-items="Model.Categories" required>
+            <option value="">Chọn danh mục</option>
+        </select>
+        <span asp-validation-for="Recipe.CategoryId" class="text-danger"></span>
+    </div>
+
+    <hr />
+    <h4 class="mt-4">Các bước thực hiện</h4>
+
+    <div id="steps-container">
+        @if (Model != null && Model.RecipeSteps != null && Model.RecipeSteps.Any())
+        {
+            @for (int i = 0; i < Model.RecipeSteps.Count; i++)
+            {
+                <div class="step-item border p-3 mb-3 rounded shadow-sm bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5>Bước @(i + 1)</h5>
+                        <button type="button" class="btn btn-danger btn-sm remove-step">Xóa bước</button>
+                    </div>
+                    <input type="hidden" name="RecipeSteps[@i].StepOrder" value="@(i + 1)" />
+
+                    <div class="form-group">
+                        <label for="RecipeSteps_@(i)_Title">Tiêu đề bước</label>
+                        <input name="RecipeSteps[@i].Title" id="RecipeSteps_@(i)_Title" class="form-control" value="@Model.RecipeSteps[i].Title" required />
+                        <span asp-validation-for="RecipeSteps[@i].Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="RecipeSteps_@(i)_Description">Mô tả bước</label>
+                        <textarea name="RecipeSteps[@i].Description" id="RecipeSteps_@(i)_Description" class="form-control" required>@Model.RecipeSteps[i].Description</textarea>
+                        <span asp-validation-for="RecipeSteps[@i].Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stepImages_@(i)">Hình ảnh minh họa</label>
+                        <input type="file" name="stepImages[@i]" id="stepImages_@(i)" class="form-control" />
+                        <span id="stepImageError_@(i)" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh minh họa cho bước này.</span>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="step-item border p-3 mb-3 rounded shadow-sm bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Bước 1</h5>
+                    <button type="button" class="btn btn-danger btn-sm remove-step">Xóa bước</button>
+                </div>
+                <input type="hidden" name="RecipeSteps[0].StepOrder" value="1" />
+
+                <div class="form-group">
+                    <label for="RecipeSteps_0_Title">Tiêu đề bước</label>
+                    <input name="RecipeSteps[0].Title" id="RecipeSteps_0_Title" class="form-control" required />
+                    <span asp-validation-for="RecipeSteps[0].Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="RecipeSteps_0_Description">Mô tả bước</label>
+                    <textarea name="RecipeSteps[0].Description" id="RecipeSteps_0_Description" class="form-control" required></textarea>
+                    <span asp-validation-for="RecipeSteps[0].Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="stepImages_0">Hình ảnh minh họa</label>
+                    <input type="file" name="stepImages[0]" id="stepImages_0" class="form-control" />
+                    <span id="stepImageError_0" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh minh họa cho bước này.</span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button type="button" id="add-step" class="btn btn-outline-primary mb-3">+ Thêm bước</button>
+
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-success">Lưu công thức</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let stepIndex = @(Model != null && Model.RecipeSteps != null ? Model.RecipeSteps.Count : 1);
+
+        // Add new step
+        document.getElementById("add-step").addEventListener("click", function () {
+            const container = document.getElementById("steps-container");
+
+            const stepDiv = document.createElement("div");
+            stepDiv.classList.add("step-item", "border", "p-3", "mb-3", "rounded", "shadow-sm", "bg-light");
+
+            stepDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Bước ${stepIndex + 1}</h5>
+                    <button type="button" class="btn btn-danger btn-sm remove-step">Xóa bước</button>
+                </div>
+                <input type="hidden" name="RecipeSteps[${stepIndex}].StepOrder" value="${stepIndex + 1}" />
+                <div class="form-group">
+                    <label for="RecipeSteps_${stepIndex}_Title">Tiêu đề bước</label>
+                    <input name="RecipeSteps[${stepIndex}].Title" id="RecipeSteps_${stepIndex}_Title" class="form-control" required />
+                    <span asp-validation-for="RecipeSteps[${stepIndex}].Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="RecipeSteps_${stepIndex}_Description">Mô tả bước</label>
+                    <textarea name="RecipeSteps[${stepIndex}].Description" id="RecipeSteps_${stepIndex}_Description" class="form-control" required></textarea>
+                    <span asp-validation-for="RecipeSteps[${stepIndex}].Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="stepImages_${stepIndex}">Hình ảnh minh họa</label>
+                    <input type="file" name="stepImages[${stepIndex}]" id="stepImages_${stepIndex}" class="form-control" />
+                    <span id="stepImageError_${stepIndex}" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh minh họa cho bước này.</span>
+                </div>
+            `;
+
+            container.appendChild(stepDiv);
+            stepIndex++;
+            updateStepHeadings();
+        });
+
+        // Remove step
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-step")) {
+                const stepItem = e.target.closest(".step-item");
+                if (document.querySelectorAll(".step-item").length > 1) {
+                    stepItem.remove();
+                    stepIndex--;
+                    reindexSteps();
+                } else {
+                    alert("Công thức phải có ít nhất một bước!");
+                }
+            }
+        });
+
+        // Reindex steps after removal
+        function reindexSteps() {
+            const stepItems = document.querySelectorAll(".step-item");
+            stepItems.forEach((item, index) => {
+                item.querySelector("h5").textContent = `Bước ${index + 1}`;
+                item.querySelector("input[name*='StepOrder']").value = index + 1;
+                item.querySelector("input[name*='Title']").name = `RecipeSteps[${index}].Title`;
+                item.querySelector("input[name*='Title']").id = `RecipeSteps_${index}_Title`;
+                item.querySelector("textarea[name*='Description']").name = `RecipeSteps[${index}].Description`;
+                item.querySelector("textarea[name*='Description']").id = `RecipeSteps_${index}_Description`;
+                item.querySelector("input[name*='stepImages']").name = `stepImages[${index}]`;
+                item.querySelector("input[name*='stepImages']").id = `stepImages_${index}`;
+                item.querySelector("span[id^='stepImageError_']").id = `stepImageError_${index}`;
+            });
+        }
+
+        // Update step headings
+        function updateStepHeadings() {
+            const stepItems = document.querySelectorAll(".step-item");
+            stepItems.forEach((item, index) => {
+                item.querySelector("h5").textContent = `Bước ${index + 1}`;
+            });
+        }
+
+        // Validate form before submission
+        function validateForm() {
+            let isValid = true;
+
+            // Check recipe image
+            const recipeImage = document.getElementById("recipeImage");
+            const recipeImageError = document.getElementById("recipeImageError");
+            if (!recipeImage.files || recipeImage.files.length === 0) {
+                recipeImageError.style.display = "block";
+                isValid = false;
+            } else {
+                recipeImageError.style.display = "none";
+            }
+
+            // Check step images
+            const stepItems = document.querySelectorAll(".step-item");
+            stepItems.forEach((item, index) => {
+                const stepImage = item.querySelector(`input[id="stepImages_${index}"]`);
+                const stepImageError = item.querySelector(`#stepImageError_${index}`);
+                if (!stepImage.files || stepImage.files.length === 0) {
+                    stepImageError.style.display = "block";
+                    isValid = false;
+                } else {
+                    stepImageError.style.display = "none";
+                }
+            });
+
+            if (!isValid) {
+                alert("Vui lòng tải lên tất cả hình ảnh trước khi lưu!");
+            }
+
+            return isValid;
+        }
+    </script>
+}

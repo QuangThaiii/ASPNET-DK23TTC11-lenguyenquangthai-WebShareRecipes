@@ -1,0 +1,79 @@
+﻿@model List<WebShareRecipes.Models.Recipe>
+@{
+    ViewData["Title"] = $"Bài viết trong danh mục {ViewBag.CategoryName}";
+}
+
+<h1>Bài viết trong danh mục @ViewBag.CategoryName</h1>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var recipe in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                    {
+                        <img src="@recipe.ImageUrl" class="card-img-top" alt="@recipe.Title" style="height: 200px; object-fit: cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@recipe.Title</h5>
+                        <p class="card-text">Danh mục: @(recipe.Category != null ? recipe.Category.Name : "Không xác định")</p>
+                        <a asp-action="Details" asp-route-id="@recipe.RecipeId" class="btn btn-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="pagination-container">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="ByCategory" asp-route-id="@ViewBag.CategoryId" asp-route-page="@(ViewBag.CurrentPage - 1)">Trước</a>
+                </li>
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" asp-action="ByCategory" asp-route-id="@ViewBag.CategoryId" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="ByCategory" asp-route-id="@ViewBag.CategoryId" asp-route-page="@(ViewBag.CurrentPage + 1)">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+else
+{
+    <p>Chủ đề này chưa có bài viết.</p>
+}
+
+<style>
+    .pagination-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #007bff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .pagination .page-item {
+        margin: 0 5px;
+    }
+</style>

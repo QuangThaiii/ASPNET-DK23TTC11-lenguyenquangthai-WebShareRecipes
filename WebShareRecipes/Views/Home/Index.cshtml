@@ -1,8 +1,202 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model WebShareRecipes.Models.IndexViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (Model.IsSearchResult)
+{
+    @if (Model.Recipes != null && Model.Recipes.Any())
+    {
+        <div class="row">
+            @foreach (var recipe in Model.Recipes)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                        {
+                            <img src="@recipe.ImageUrl" class="card-img-top" alt="@recipe.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@recipe.Title</h5>
+                            <p class="card-text">Danh mục: @(recipe.Category?.Name ?? "Không xác định")</p>
+                            <a asp-action="Details" asp-controller="Home" asp-route-id="@recipe.RecipeId" class="btn btn-primary">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="pagination-container">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Search" asp-route-query="@Model.SearchQuery" asp-route-page="@(Model.CurrentPage - 1)">Trước</a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                            <a class="page-link" asp-action="Search" asp-route-query="@Model.SearchQuery" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="Search" asp-route-query="@Model.SearchQuery" asp-route-page="@(Model.CurrentPage + 1)">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+    else
+    {
+        <p>Không tìm thấy bài viết nào khớp với "@Model.SearchQuery".</p>
+    }
+}
+else
+{
+    @if (Model.Categories != null && Model.Categories.Any())
+    {
+        @foreach (var category in Model.Categories)
+        {
+            <h2>@category.Category.Name</h2>
+
+            @if (category.Recipes != null && category.Recipes.Any())
+            {
+                <div class="recipe-carousel" id="carousel-@category.Category.CategoryId">
+                    <div class="recipe-carousel-inner">
+                        @foreach (var recipe in category.Recipes)
+                        {
+                            <div class="recipe-item">
+                                <div class="card">
+                                    @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                                    {
+                                        <img src="@recipe.ImageUrl" class="card-img-top" alt="@recipe.Title" style="height: 200px; object-fit: cover;">
+                                    }
+                                    <div class="card-body">
+                                        <h5 class="card-title">@recipe.Title</h5>
+                                        <p class="card-text">Danh mục: @(recipe.Category?.Name ?? "Không xác định")</p>
+                                        <a asp-action="Details" asp-controller="Home" asp-route-id="@recipe.RecipeId" class="btn btn-primary">Xem chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" onclick="moveCarousel('@category.Category.CategoryId', -1)"> &lt; </button>
+                    <button class="carousel-control-next" onclick="moveCarousel('@category.Category.CategoryId', 1)"> &gt; </button>
+                </div>
+            }
+            else
+            {
+                <p>Không có bài viết cho chủ đề này.</p>
+            }
+
+            <a asp-action="ByCategory" asp-route-id="@category.Category.CategoryId" class="btn btn-link">Xem thêm</a>
+        }
+    }
+    else
+    {
+        <p>Chưa có bài viết nào.</p>
+    }
+}
+
+<style>
+    .pagination-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #007bff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .pagination .page-item {
+        margin: 0 5px;
+    }
+
+    /* Carousel styles */
+    .recipe-carousel {
+        position: relative;
+        overflow: hidden;
+        padding: 0 40px;
+        margin-bottom: 30px;
+    }
+
+    .recipe-carousel-inner {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+
+    .recipe-item {
+        flex: 0 0 33.3333%;
+        max-width: 33.3333%;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        line-height: 20px;
+        font-size: 20px;
+        border-radius: 50%;
+    }
+
+    .carousel-control-prev {
+        left: 10px;
+    }
+
+    .carousel-control-next {
+        right: 10px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const carouselState = new Map();
+
+        window.moveCarousel = function (carouselId, direction) {
+            const carousel = document.getElementById("carousel-" + carouselId);
+            if (!carousel) return;
+
+            const inner = carousel.querySelector(".recipe-carousel-inner");
+            const items = inner.querySelectorAll(".recipe-item");
+            const itemsPerPage = 3;
+            const totalItems = items.length;
+
+            if (!carouselState.has(carouselId)) {
+                carouselState.set(carouselId, 0);
+            }
+
+            let currentIndex = carouselState.get(carouselId);
+            const maxIndex = Math.ceil(totalItems / itemsPerPage) - 1;
+
+            currentIndex = Math.max(0, Math.min(currentIndex + direction, maxIndex));
+            carouselState.set(carouselId, currentIndex);
+
+            const translateX = -currentIndex * (100);
+            inner.style.transform = `translateX(${translateX}%)`;
+        };
+    });
+</script>
