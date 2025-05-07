@@ -1,14 +1,14 @@
 ﻿@model List<WebShareRecipes.Models.Recipe>
 @{
-    ViewData["Title"] = "Quản lý bài viết";
+    ViewData["Title"] = "Quản lý công thức";
 }
 
-<!-- Bootstrap & DataTables CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <table id="managePostsTable" class="table table-bordered table-hover">
-    <thead class="table-dark">
+    <thead style="background-color: #4A90E2; color: white;">
         <tr>
             <th>Tiêu đề</th>
             <th>Danh mục</th>
@@ -36,7 +36,7 @@
                         </form>
                     }
                     <form asp-action="DeletePost" asp-route-id="@recipe.RecipeId" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa bài viết này?')">Xóa</button>
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa công thức này?')">Xóa</button>
                     </form>
                 </td>
             </tr>
@@ -44,21 +44,83 @@
     </tbody>
 </table>
 
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        color: #333333;
+        background-color: #F8F9FA;
+    }
+
+    h1, h2, h3 {
+        font-family: 'Playfair Display', serif;
+    }
+
+    .table-bordered {
+        border-color: #E0E0E0;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #E9ECEF;
+    }
+
+    .btn-info {
+        background-color: #26C6DA;
+        border-color: #26C6DA;
+    }
+
+        .btn-info:hover {
+            background-color: #00ACC1;
+            border-color: #00ACC1;
+        }
+
+    .btn-success {
+        background-color: #66BB6A;
+        border-color: #66BB6A;
+    }
+
+        .btn-success:hover {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+    .btn-danger {
+        background-color: #E57373;
+        border-color: #E57373;
+    }
+
+        .btn-danger:hover {
+            background-color: #D32F2F;
+            border-color: #D32F2F;
+        }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: #4A90E2 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #4A90E2 !important;
+            border-color: #4A90E2 !important;
+            color: white !important;
+        }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #E0E0E0;
+        border-radius: 4px;
+    }
+</style>
+
 @section Scripts {
-    <!-- jQuery + DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
     <script>
         $(document).ready(function () {
-            // Kích hoạt DataTables với tùy chỉnh ngôn ngữ tiếng Việt
             $('#managePostsTable').DataTable({
                 language: {
-                    lengthMenu: "Hiển thị _MENU_ bài viết mỗi trang",
-                    zeroRecords: "Không tìm thấy bài viết nào",
+                    lengthMenu: "Hiển thị _MENU_ công thức mỗi trang",
+                    zeroRecords: "Không tìm thấy công thức nào",
                     info: "Hiển thị trang _PAGE_ trong tổng số _PAGES_ trang",
-                    infoEmpty: "Không có bài viết nào",
-                    infoFiltered: "(lọc từ _MAX_ bài viết)",
+                    infoEmpty: "Không có công thức nào",
+                    infoFiltered: "(lọc từ _MAX_ công thức)",
                     search: "Tìm kiếm:",
                     paginate: {
                         first: "Đầu",
@@ -68,7 +130,6 @@
                     }
                 },
                 pageLength: 10
-
             });
         });
     </script>

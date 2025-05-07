@@ -45,8 +45,9 @@
 **Ngày 06/05/2025**:
 
 * Tạo file `README.md` mô tả lại toàn bộ tiến độ thực hiện dự án theo dạng nhật ký.
-* Tiếp tục kiểm tra và tối ưu giao diện, chuẩn bị báo cáo cuối kỳ.
 
+**Ngày 07/05/2025**:
+* Cập nhật giao diện, màu sắc và chức năng tìm kiếm và chuẩn bị báo cáo cuối kỳ.
 ## Hướng dẫn Sử dụng
 
 ### 1. Cài đặt Môi trường Phát triển
@@ -126,7 +127,7 @@ Update-Database
 
 * **Chỉnh sửa/Xóa**: Quản lý bài viết đã đăng qua trang "Bài viết của tôi".
 
-* **Phân loại**: Lọc công thức theo danh mục.
+* **Phân loại và tìm kiếm**: Lọc và tìm kiếm công thức theo danh mục và từ khóa.
 
 ### 8. Báo cáo Cuối kỳ
 

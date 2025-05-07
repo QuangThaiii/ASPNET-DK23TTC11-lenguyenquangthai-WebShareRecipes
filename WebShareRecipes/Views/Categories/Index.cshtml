@@ -1,18 +1,18 @@
 ﻿@model List<WebShareRecipes.Models.Category>
 @{
-    ViewData["Title"] = "Quản lý chủ đề";
+    ViewData["Title"] = "Quản lý danh mục";
 }
 
-<!-- Bootstrap & DataTables CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-@* aaaa ádasdasdsadsa *@
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Tạo chủ đề mới</button>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Tạo danh mục mới</button>
 
 <table id="categoriesTable" class="table table-bordered table-hover">
-    <thead class="table-dark">
+    <thead style="background-color: #4A90E2; color: white;">
         <tr>
-            <th>Tên chủ đề</th>
+            <th>Tên danh mục</th>
             <th>Hiển thị</th>
             <th>Hành động</th>
         </tr>
@@ -40,24 +40,23 @@
                     </button>
                     <a asp-action="Delete" asp-route-id="@category.CategoryId"
                        class="btn btn-danger btn-sm"
-                       onclick="return confirm('Bạn có chắc muốn xóa chủ đề này?')">Xóa</a>
+                       onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">Xóa</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<!-- Modal Create -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form asp-action="Create" method="post" class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Tạo chủ đề mới</h5>
+                <h5 class="modal-title">Tạo danh mục mới</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Tên chủ đề</label>
+                    <label class="form-label">Tên danh mục</label>
                     <input name="Name" class="form-control" required />
                 </div>
                 <div class="form-check form-switch">
@@ -73,18 +72,17 @@
     </div>
 </div>
 
-<!-- Modal Edit -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form id="editForm" method="post" class="modal-content">
             <input type="hidden" name="CategoryId" id="editCategoryId" />
             <div class="modal-header">
-                <h5 class="modal-title">Chỉnh sửa chủ đề</h5>
+                <h5 class="modal-title">Chỉnh sửa danh mục</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Tên chủ đề</label>
+                    <label class="form-label">Tên danh mục</label>
                     <input name="Name" id="editName" class="form-control" required />
                 </div>
                 <div class="form-check form-switch">
@@ -100,21 +98,97 @@
     </div>
 </div>
 
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        color: #333333;
+        background-color: #F8F9FA;
+    }
+
+    h1, h2, h3, h5 {
+        font-family: 'Playfair Display', serif;
+    }
+
+    .table-bordered {
+        border-color: #E0E0E0;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #E9ECEF;
+    }
+
+    .btn-primary {
+        background-color: #4A90E2;
+        border-color: #4A90E2;
+    }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+            border-color: #357ABD;
+        }
+
+    .btn-warning {
+        background-color: #F28C38;
+        border-color: #F28C38;
+    }
+
+        .btn-warning:hover {
+            background-color: #D1762F;
+            border-color: #D1762F;
+        }
+
+    .btn-danger {
+        background-color: #E57373;
+        border-color: #E57373;
+    }
+
+        .btn-danger:hover {
+            background-color: #D32F2F;
+            border-color: #D32F2F;
+        }
+
+    .form-check-input:checked {
+        background-color: #4A90E2;
+        border-color: #4A90E2;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: #4A90E2 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #4A90E2 !important;
+            border-color: #4A90E2 !important;
+            color: white !important;
+        }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #E0E0E0;
+        border-radius: 4px;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        background-color: #4A90E2;
+        color: white;
+    }
+</style>
+
 @section Scripts {
-    <!-- jQuery + DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
     <script>
         $(document).ready(function () {
-            // Kích hoạt DataTables với tùy chỉnh ngôn ngữ tiếng Việt
             $('#categoriesTable').DataTable({
                 language: {
-                    lengthMenu: "Hiển thị _MENU_ chủ đề mỗi trang",
-                    zeroRecords: "Không tìm thấy chủ đề nào",
+                    lengthMenu: "Hiển thị _MENU_ danh mục mỗi trang",
+                    zeroRecords: "Không tìm thấy danh mục nào",
                     info: "Hiển thị trang _PAGE_ trong tổng số _PAGES_ trang",
-                    infoEmpty: "Không có chủ đề nào",
-                    infoFiltered: "(lọc từ _MAX_ chủ đề)",
+                    infoEmpty: "Không có danh mục nào",
+                    infoFiltered: "(lọc từ _MAX_ danh mục)",
                     search: "Tìm kiếm:",
                     paginate: {
                         first: "Đầu",
@@ -126,7 +200,6 @@
                 pageLength: 10
             });
 
-            // Bắt sự kiện sửa
             $('.edit-btn').click(function () {
                 const id = $(this).data('id');
                 const name = $(this).data('name');
@@ -138,7 +211,6 @@
                 $('#editStatus').prop('checked', status === true || status === "True");
             });
 
-            // Toggle status qua AJAX
             $('.toggle-status').change(function () {
                 const id = $(this).data('id');
                 $.post('/Categories/ToggleStatus', { id: id });
@@ -146,4 +218,3 @@
         });
     </script>
 }
-
