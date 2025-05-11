@@ -134,4 +134,9 @@ Update-Database
 * Tổng hợp tiến độ, ảnh chụp màn hình, và các lỗi đã xử lý.
 * Viết tài liệu báo cáo theo yêu cầu môn học.
 * Đóng gói source code, backup CSDL nếu cần nộp.
-### 9. Thông tin liên hệ Lê Nguyễn Quang Thái(thaihht2002@gmail.com)
+### 9. Thông Tin Liên Hệ
+
+- **Họ và tên**: Lê Nguyễn Quang Thái  
+- **Email**: thaihht2002@gmail.com  
+- **Mã sinh viên**: 170123491
+- **Số điện thoại**: 0989464966
