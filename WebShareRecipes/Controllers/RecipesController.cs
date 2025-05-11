@@ -31,6 +31,7 @@ namespace WebShareRecipes.Controllers
 
         public IActionResult Create()
         {
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             Debug.WriteLine("GET Create action called");
             var userId = HttpContext.Session.GetInt32("UserId");
             Debug.WriteLine($"UserId from session: {userId?.ToString() ?? "null"}");
@@ -135,6 +136,23 @@ namespace WebShareRecipes.Controllers
                 }
             }
 
+            // Clear validation for Description, Ingredients, Instructions
+            if (ModelState.ContainsKey("Recipe.Description"))
+            {
+                ModelState["Recipe.Description"].Errors.Clear();
+                ModelState["Recipe.Description"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+            if (ModelState.ContainsKey("Recipe.Ingredients"))
+            {
+                ModelState["Recipe.Ingredients"].Errors.Clear();
+                ModelState["Recipe.Ingredients"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+            if (ModelState.ContainsKey("Recipe.Instructions"))
+            {
+                ModelState["Recipe.Instructions"].Errors.Clear();
+                ModelState["Recipe.Instructions"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+
             // Log ModelState after clearing errors
             Debug.WriteLine("ModelState after clearing errors:");
             foreach (var entry in ModelState)
@@ -210,9 +228,9 @@ namespace WebShareRecipes.Controllers
                 var recipe = new Recipe
                 {
                     Title = viewModel.Recipe.Title ?? throw new Exception("Recipe.Title cannot be null"),
-                    Description = viewModel.Recipe.Description,
-                    Ingredients = viewModel.Recipe.Ingredients,
-                    Instructions = viewModel.Recipe.Instructions,
+                    Description = viewModel.Recipe.Description, // Không bắt buộc
+                    Ingredients = viewModel.Recipe.Ingredients, // Không bắt buộc
+                    Instructions = viewModel.Recipe.Instructions, // Không bắt buộc
                     CategoryId = viewModel.Recipe.CategoryId ?? throw new Exception("Recipe.CategoryId cannot be null"),
                     UserId = parsedUserId,
                     CreatedAt = DateTime.Now,
@@ -275,7 +293,6 @@ namespace WebShareRecipes.Controllers
             }
             catch (Exception ex)
             {
-                // Log full exception details
                 var errorMessage = ex.Message;
                 var innerException = ex.InnerException;
                 while (innerException != null)
@@ -292,6 +309,7 @@ namespace WebShareRecipes.Controllers
 
         public IActionResult MyRecipes()
         {
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             Debug.WriteLine("MyRecipes action called");
             var userId = HttpContext.Session.GetInt32("UserId");
             Debug.WriteLine($"UserId from session: {userId?.ToString() ?? "null"}");
@@ -428,7 +446,7 @@ namespace WebShareRecipes.Controllers
                 ModelState["Recipe.ImageUrl"].Errors.Clear();
                 ModelState["Recipe.ImageUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
             }
-            if (ModelState.ContainsKey("image")) // Clear validation for image field in Edit action
+            if (ModelState.ContainsKey("image"))
             {
                 ModelState["image"].Errors.Clear();
                 ModelState["image"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
@@ -441,6 +459,23 @@ namespace WebShareRecipes.Controllers
                     ModelState[key].Errors.Clear();
                     ModelState[key].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
                 }
+            }
+
+            // Clear validation for Description, Ingredients, Instructions
+            if (ModelState.ContainsKey("Recipe.Description"))
+            {
+                ModelState["Recipe.Description"].Errors.Clear();
+                ModelState["Recipe.Description"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+            if (ModelState.ContainsKey("Recipe.Ingredients"))
+            {
+                ModelState["Recipe.Ingredients"].Errors.Clear();
+                ModelState["Recipe.Ingredients"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+            if (ModelState.ContainsKey("Recipe.Instructions"))
+            {
+                ModelState["Recipe.Instructions"].Errors.Clear();
+                ModelState["Recipe.Instructions"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
             }
 
             // Log ModelState after clearing errors
@@ -537,13 +572,12 @@ namespace WebShareRecipes.Controllers
 
                 // Update recipe fields
                 recipe.Title = viewModel.Recipe.Title ?? throw new Exception("Recipe.Title cannot be null");
-                recipe.Description = viewModel.Recipe.Description;
-                recipe.Ingredients = viewModel.Recipe.Ingredients;
-                recipe.Instructions = viewModel.Recipe.Instructions;
+                recipe.Description = viewModel.Recipe.Description; // Không bắt buộc
+                recipe.Ingredients = viewModel.Recipe.Ingredients; // Không bắt buộc
+                recipe.Instructions = viewModel.Recipe.Instructions; // Không bắt buộc
                 recipe.CategoryId = viewModel.Recipe.CategoryId ?? throw new Exception("Recipe.CategoryId cannot be null");
                 recipe.ImageUrl = imageUrl;
                 recipe.UpdatedAt = DateTime.Now;
-                // Keep CreatedAt and IsApproved unchanged
                 Debug.WriteLine($"Updated Recipe: Title={recipe.Title} (Length={recipe.Title.Length}), CategoryId={recipe.CategoryId}, UserId={recipe.UserId}, ImageUrl={recipe.ImageUrl ?? "null"}, IsApproved={recipe.IsApproved?.ToString() ?? "null"}");
 
                 // Remove existing steps
@@ -628,7 +662,6 @@ namespace WebShareRecipes.Controllers
             }
             catch (Exception ex)
             {
-                // Log full exception details
                 var errorMessage = ex.Message;
                 var innerException = ex.InnerException;
                 while (innerException != null)
@@ -656,7 +689,7 @@ namespace WebShareRecipes.Controllers
             }
 
             var recipe = _context.Recipes
-                .Include(r => r.Steps) // Include related RecipeSteps
+                .Include(r => r.Steps)
                 .FirstOrDefault(r => r.RecipeId == id && r.UserId == userId.Value);
             if (recipe == null)
             {

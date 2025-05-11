@@ -22,6 +22,7 @@ namespace WebShareRecipes.Controllers
                 .OrderByDescending(r => r.CreatedAt)
                 .ToList();
             ViewBag.Users = _context.Users.ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             return View(recipes);
         }
 

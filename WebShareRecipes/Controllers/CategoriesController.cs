@@ -14,6 +14,7 @@ namespace WebShareRecipes.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             return View(_context.Categories.ToList());
         }
 

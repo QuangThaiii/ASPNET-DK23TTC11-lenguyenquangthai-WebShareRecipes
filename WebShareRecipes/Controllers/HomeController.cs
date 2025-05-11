@@ -20,7 +20,7 @@ namespace WebShareRecipes.Controllers
 
         public IActionResult Index(string query, int? page)
         {
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             var viewModel = new IndexViewModel
             {
                 Categories = null,
@@ -40,6 +40,7 @@ namespace WebShareRecipes.Controllers
                 var recipes = _context.Recipes
                     .Include(r => r.Category)
                     .Where(r => r.IsApproved == true &&
+                        r.Category.Status == true && // Chỉ lấy công thức từ danh mục đang hoạt động
                         (r.Title.ToLower().Contains(query) ||
                          r.Ingredients.ToLower().Contains(query) ||
                          r.Category.Name.ToLower().Contains(query)))
@@ -50,6 +51,7 @@ namespace WebShareRecipes.Controllers
 
                 int totalRecipes = _context.Recipes
                     .Count(r => r.IsApproved == true &&
+                        r.Category.Status == true && // Áp dụng điều kiện Status cho đếm tổng số
                         (r.Title.ToLower().Contains(query) ||
                          r.Ingredients.ToLower().Contains(query) ||
                          r.Category.Name.ToLower().Contains(query)));
@@ -62,6 +64,7 @@ namespace WebShareRecipes.Controllers
             else
             {
                 var categories = _context.Categories
+                    .Where(c => c.Status == true) // Chỉ lấy danh mục đang hoạt động
                     .Select(c => new CategoryWithRecipesViewModel
                     {
                         Category = c,
@@ -81,7 +84,7 @@ namespace WebShareRecipes.Controllers
 
         public IActionResult ByCategory(int id, string query, int? page)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id && c.Status == true);
             if (category == null)
             {
                 return NotFound();
@@ -92,7 +95,7 @@ namespace WebShareRecipes.Controllers
 
             var recipesQuery = _context.Recipes
                 .Include(r => r.Category)
-                .Where(r => r.CategoryId == id && r.IsApproved == true);
+                .Where(r => r.CategoryId == id && r.IsApproved == true && r.Category.Status == true);
 
             if (!string.IsNullOrEmpty(query))
             {
@@ -113,7 +116,7 @@ namespace WebShareRecipes.Controllers
 
             ViewBag.CategoryName = category.Name;
             ViewBag.CategoryId = id;
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalPages = totalPages;
             ViewBag.SearchQuery = query;
@@ -126,7 +129,7 @@ namespace WebShareRecipes.Controllers
             var recipe = _context.Recipes
                 .Include(r => r.Steps)
                 .Include(r => r.Category)
-                .FirstOrDefault(r => r.RecipeId == id && r.IsApproved == true);
+                .FirstOrDefault(r => r.RecipeId == id && r.IsApproved == true && r.Category.Status == true);
             if (recipe == null)
             {
                 return NotFound();
@@ -134,25 +137,25 @@ namespace WebShareRecipes.Controllers
 
             var user = _context.Users.FirstOrDefault(u => u.UserId == recipe.UserId);
             ViewBag.Username = user != null ? user.Username : "Không xác định";
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             return View(recipe);
         }
 
         public IActionResult Search(string query, int? page)
         {
-            return Index(query, page); // Chuyển hướng về Index với query
+            return Index(query, page);
         }
 
         public IActionResult Privacy()
         {
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

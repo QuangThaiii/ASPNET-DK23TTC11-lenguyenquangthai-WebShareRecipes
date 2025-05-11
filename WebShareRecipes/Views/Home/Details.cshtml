@@ -18,6 +18,20 @@
 <ol>
     @foreach (var step in Model.Steps.OrderBy(s => s.StepOrder))
     {
-        <li>@step.Description</li>
+        <li>
+            @step.Description
+            @if (!string.IsNullOrEmpty(step.ImageUrl))
+            {
+                <br />
+                <img src="@step.ImageUrl" class="img-fluid mt-2" alt="Hình ảnh bước @step.StepOrder" style="max-width: 300px;">
+            }
+        </li>
     }
 </ol>
+
+<style>
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
+</style>

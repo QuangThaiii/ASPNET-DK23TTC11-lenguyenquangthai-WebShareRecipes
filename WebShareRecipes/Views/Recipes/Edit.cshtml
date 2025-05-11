@@ -18,18 +18,18 @@
 
     <div class="form-group">
         <label asp-for="Recipe.Description">Mô tả</label>
-        <textarea asp-for="Recipe.Description" class="form-control"></textarea>
+        <textarea data-val="false" asp-for="Recipe.Description" class="form-control"></textarea>
         <span asp-validation-for="Recipe.Description" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="Recipe.Ingredients">Nguyên liệu</label>
-        <textarea name="Recipe.Ingredients" class="form-control">@Model.Recipe.Ingredients</textarea>
+        <textarea name="Recipe.Ingredients" data-val="false" class="form-control">@Model.Recipe.Ingredients</textarea>
     </div>
 
     <div class="form-group">
         <label for="Recipe.Instructions">Hướng dẫn chung</label>
-        <textarea name="Recipe.Instructions" class="form-control">@Model.Recipe.Instructions</textarea>
+        <textarea name="Recipe.Instructions" data-val="false" class="form-control">@Model.Recipe.Instructions</textarea>
     </div>
 
     <div class="form-group">
@@ -37,9 +37,9 @@
         @if (!string.IsNullOrEmpty(Model.Recipe.ImageUrl))
         {
             <img src="@Model.Recipe.ImageUrl" alt="Hình ảnh hiện tại" class="img-fluid mt-2" style="max-width: 200px;" />
-            <input type="hidden" name="Recipe.ImageUrl" value="@Model.Recipe.ImageUrl" />
+            <input type="hidden" name="Recipe.ImageUrl" value="@Model.Recipe.ImageUrl"  />
         }
-        <input type="file" name="image" id="recipeImage" class="form-control mt-2" />
+        <input type="file" name="image" id="recipeImage" class="form-control mt-2" accept="image/png, image/gif, image/jpeg" />
         <span id="recipeImageError" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh món ăn nếu muốn thay đổi.</span>
     </div>
 
@@ -85,7 +85,7 @@
                             <img src="@Model.RecipeSteps[i].ImageUrl" alt="Hình ảnh bước @(i + 1)" class="img-fluid mt-2" style="max-width: 200px;" />
                             <input type="hidden" name="RecipeSteps[@i].ImageUrl" value="@Model.RecipeSteps[i].ImageUrl" />
                         }
-                        <input type="file" name="stepImages[@i]" id="stepImages_@(i)" class="form-control mt-2" />
+                        <input type="file" name="stepImages[@i]" id="stepImages_@(i)" class="form-control mt-2" accept="image/png, image/gif, image/jpeg" />
                         <span id="stepImageError_@(i)" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh minh họa nếu muốn thay đổi.</span>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
 
                 <div class="form-group">
                     <label for="stepImages_0">Hình ảnh minh họa</label>
-                    <input type="file" name="stepImages[0]" id="stepImages_0" class="form-control" />
+                    <input type="file" name="stepImages[0]" id="stepImages_0" class="form-control" accept="image/png, image/gif, image/jpeg" />
                     <span id="stepImageError_0" class="text-danger" style="display:none;">Vui lòng tải lên hình ảnh minh họa nếu muốn thay đổi.</span>
                 </div>
             </div>

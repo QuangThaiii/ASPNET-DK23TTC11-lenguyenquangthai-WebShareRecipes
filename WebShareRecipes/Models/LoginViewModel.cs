@@ -1,13 +1,14 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebShareRecipes.Models
 {
     public class LoginViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập tên người dùng.")]
         public string Username { get; set; }
 
-        [Required, DataType(DataType.Password)]
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }

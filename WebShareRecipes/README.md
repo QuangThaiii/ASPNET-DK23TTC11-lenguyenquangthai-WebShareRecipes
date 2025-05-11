@@ -134,3 +134,4 @@ Update-Database
 * Tổng hợp tiến độ, ảnh chụp màn hình, và các lỗi đã xử lý.
 * Viết tài liệu báo cáo theo yêu cầu môn học.
 * Đóng gói source code, backup CSDL nếu cần nộp.
+### 9. Thông tin liên hệ Lê Nguyễn Quang Thái(thaihht2002@gmail.com)

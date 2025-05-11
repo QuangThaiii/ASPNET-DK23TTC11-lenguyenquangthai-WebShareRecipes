@@ -21,6 +21,7 @@ namespace WebShareRecipes.Controllers
         // GET: /Users/Register
         public IActionResult Register()
         {
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             Debug.WriteLine("GET Register action called");
             return View();
         }
@@ -66,6 +67,7 @@ namespace WebShareRecipes.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            ViewBag.Categories = _context.Categories.Where(c => c.Status == true).ToList();
             Debug.WriteLine("GET Login action called");
             return View();
         }
@@ -82,24 +84,26 @@ namespace WebShareRecipes.Controllers
                 var passwordHash = HashPassword(model.Password);
                 var user = _context.Users.FirstOrDefault(u => u.Username == model.Username && u.PasswordHash == passwordHash);
 
-                if (user != null)
+                if (user == null)
                 {
-                    HttpContext.Session.SetInt32("UserId", user.UserId);
-                    HttpContext.Session.SetString("Username", user.Username);
-                    HttpContext.Session.SetString("IsAdmin", user.IsAdmin.ToString());
-                    Debug.WriteLine($"Login successful: UserId={user.UserId}, Username={user.Username}");
-                    Debug.WriteLine($"Session set: UserId={HttpContext.Session.GetInt32("UserId")}, Username={HttpContext.Session.GetString("Username")}");
-                    return RedirectToAction("Index", "Home");
+                    Debug.WriteLine("Login failed: Invalid username or password");
+                    ModelState.AddModelError("", "Thông tin đăng nhập không hợp lệ.");
+                    return View(model);
                 }
 
-                Debug.WriteLine("Login failed: Invalid username or password");
-                ModelState.AddModelError("", "Thông tin đăng nhập không hợp lệ.");
-            }
-            else
-            {
-                Debug.WriteLine("ModelState is invalid for Login");
+                HttpContext.Session.SetInt32("UserId", user.UserId);
+                HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("IsAdmin", user.IsAdmin.ToString());
+                Debug.WriteLine($"Login successful: UserId={user.UserId}, Username={user.Username}");
+                Debug.WriteLine($"Session set: UserId={HttpContext.Session.GetInt32("UserId")}, Username={HttpContext.Session.GetString("Username")}");
+                return RedirectToAction("Index", "Home");
             }
 
+            Debug.WriteLine("ModelState is invalid for Login");
+            foreach (var error in ModelState)
+            {
+                Debug.WriteLine($"Validation error: {error.Key} - {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+            }
             return View(model);
         }
 

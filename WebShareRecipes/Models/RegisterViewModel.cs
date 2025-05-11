@@ -1,19 +1,23 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebShareRecipes.Models
 {
     public class RegisterViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập tên người dùng.")]
         public string Username { get; set; }
 
-        [Required, EmailAddress]
+        [Required(ErrorMessage = "Vui lòng nhập email.")]
+        [EmailAddress(ErrorMessage = "Định dạng email không hợp lệ.")]
         public string Email { get; set; }
 
-        [Required, DataType(DataType.Password)]
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required, DataType(DataType.Password), Compare("Password")]
+        [Required(ErrorMessage = "Vui lòng xác nhận mật khẩu.")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp.")]
         public string ConfirmPassword { get; set; }
     }
 }
